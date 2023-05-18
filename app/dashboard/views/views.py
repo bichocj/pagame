@@ -7,6 +7,9 @@ from .apis.users import UserViewSet, UserPathSerializer
 from .apis.afp_onp import AfpOnpViewSet, AfpOnpPathSerializer
 from .apis.daylies import DayliViewSet, DayliPathSerializer
 from .apis.companies import CompanyViewSet, CompanyPathSerializer
+from django.db.models.functions import ExtractMonth, ExtractYear
+from django.db.models import F, Sum
+
 from core import models
 
 
@@ -15,6 +18,21 @@ def home_view(request):
     company = models.Company.objects.filter(is_principal=True).first()
     message = "hello low"
     return render(request, "dashboard/home.html", locals())
+
+
+@login_required
+def invoices_view(request):
+    year = 2023
+    employees = models.Employ.objects.all()
+    months_available = (
+        models.Dayli.objects.annotate(year=ExtractYear("start_at_1"))
+        .annotate(month=ExtractMonth("start_at_1"))
+        .values_list("month", flat=True)
+        .distinct()
+        .filter(start_at_1__year=year)
+        .order_by("month")
+    )
+    return render(request, "dashboard/invoices.html", locals())
 
 
 people_path = PersonPathSerializer.get_path()

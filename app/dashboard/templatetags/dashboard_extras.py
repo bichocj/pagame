@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-from django.utils.safestring import mark_safe
 from django import template
 
 register = template.Library()
@@ -63,11 +61,21 @@ def format_bool(value):
     return value
 
 
-#
-# register.filter("get_columns_labels", get_columns_labels)
-# register.filter("get_column_label", get_column_label)
-# register.filter("get_model_name_plural", get_model_name_plural)
-# register.filter("get_model_name", get_model_name)
-# register.filter("get_home_path", get_home_path)
-# register.filter("active_if_path_match", active_if_path_match)
-# register.filter("custom_class", custom_class)
+@register.filter
+def get_month_name_by_number(value):
+    month_dict = {
+        1: "Enenro",
+        2: "Febrero",
+        3: "Marzo",
+        4: "Abril",
+        5: "Mayo",
+        6: "Junio",
+        7: "Julio",
+        8: "Agosto",
+        9: "Septiembre",
+        10: "Octubre",
+        11: "Noviembre",
+        12: "Diciembre",
+    }
+
+    return month_dict[value]

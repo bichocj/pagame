@@ -1,0 +1,33 @@
+{% extends 'dashboard/layout.html' %}
+{% load static %}
+{% load dashboard_extras %}
+{% block body %}
+
+<div class="content-main">
+    <div class="page-header">      
+        <h2 style="display: inline;">Boletas</h2>
+    </div>
+</div>
+<br>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Empleado</th>
+                {% for month_number in months_available %}
+                <th>{{month_number|get_month_name_by_number}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for employ in employees %}
+            <tr>
+                <td>{{ employ.person }}</td>
+                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
+                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
+                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
+                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

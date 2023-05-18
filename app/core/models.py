@@ -114,6 +114,9 @@ class Invoice(models.Model):
     period = models.DateField()
     days_worked = models.IntegerField()
     days_lazy = models.IntegerField()
+    salay = models.DecimalField(
+        "salario", blank=True, null=True, max_digits=6, decimal_places=2
+    )
 
     class Meta:
         verbose_name = "boleta"
