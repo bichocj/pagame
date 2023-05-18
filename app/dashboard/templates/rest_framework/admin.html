@@ -31,7 +31,7 @@
             {% endif %}
 
             {% if delete_form %}
-              <form class="button-form" action="{{ request.get_full_path }}" data-method="DELETE">
+              <form class="button-form" action="{{ request.get_full_path }}" data-method="DELETE" id="delete_form">
                 <button class="btn btn-danger">
                   <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Eliminar
                 </button>
@@ -65,7 +65,7 @@
                 <h2 style="display: inline;">{{view|get_model_name_plural}} </h2>
                 {% else %}
                 <div >
-                  <a href="{{view|get_home_path}}"><h2 style="display: inline;"> {{view|get_model_name_plural}} </h2> </a>  <h2 style="display: inline;">&nbsp/&nbsp{{view|get_model_name }} </h2>
+                  <a href="{{view|get_home_path}}" id="list-view"><h2 style="display: inline;"> {{view|get_model_name_plural}} </h2> </a>  <h2 style="display: inline;">&nbsp/&nbsp{{view|get_model_name }} </h2>
                 </div>
                 {%  endif %}
                 
@@ -133,6 +133,7 @@
             <form id="update_form" action="{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
               <div class="modal-body">
                 <fieldset>
+                  {% csrf_token %}
                   {{ put_form }}
                 </fieldset>
               </div>
@@ -153,10 +154,15 @@
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">{{ error_title }}</h4>
-              </div>
-              <form action="{{ request.get_full_path }}" data-method="{{ request.method }}" enctype="multipart/form-data" class="form-horizontal" novalidate>
+              </div>              
+              <form
+                {% if request.method == 'POST' %}method="POST" {% endif %}                
+                action="{{ request.get_full_path }}" 
+                data-method="{{ request.method }}" 
+                enctype="multipart/form-data" class="form-horizontal" novalidate>
                 <div class="modal-body">
                   <fieldset>
+                    {% csrf_token %}
                     {{ error_form }}
                   </fieldset>
                 </div>
@@ -199,6 +205,24 @@
         <script src="{% static 'rest_framework/js/prettify-min.js' %}"></script>
         <script src="{% static 'rest_framework/js/default.js' %}"></script>        
         <script>
+          $("#delete_form").on( "submit", function( event ) {
+            event.preventDefault();
+            $.ajax({
+              type : 'DELETE',
+              url : '{{ request.get_full_path }}',
+              headers: { 'x-some-other-header': 'some value' },
+              data: $('#update_form').serialize(),
+              success: function (data) {
+                  window.location.href = '{{view|get_home_path}}';
+              },
+              error: function(data) {
+                for (const [key, value] of Object.entries(data.responseJSON)) {                  
+                  alert(`${key}: ${value}`);                  
+                }
+              }
+            });
+          });
+
           $("#update_form").on( "submit", function( event ) {
             event.preventDefault();
 
