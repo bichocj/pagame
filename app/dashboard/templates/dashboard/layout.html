@@ -92,22 +92,47 @@
           </strong>
           <ul class="nav nav-sidebar">
             <li class="nav-item">
-              <a class="bd-links-link d-inline-block rounded {{'reports/animals'|active_if_path_match:request}}"
-              href="{% url 'dashboard:home'%}">
-                Reporte
+              <a class="bd-links-link d-inline-block rounded {{'attendance'|active_if_path_match:request}}"
+              href="{% url 'dashboard:attendance-list'%}">
+                Asistencias
               </a>
-            </li>            
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'invoices'|active_if_path_match:request}}"
+              href="{% url 'dashboard:invoices'%}">
+                Boletas
+              </a>
+            </li>
           </ul>
           <strong class="bd-links-heading d-flex w-100 align-items-center fw-semibold">
             Configuraciones
           </strong>
-          <ul class="nav nav-sidebar">
+          <ul class="nav nav-sidebar">           
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'employees'|active_if_path_match:request}}"
+              href="{% url 'dashboard:employees-list'%}">
+                Empleados
+              </a>
+            </li>
+
             <li class="nav-item">
               <a class="bd-links-link d-inline-block rounded {{'people'|active_if_path_match:request}}"
               href="{% url 'dashboard:people-list'%}">
                 Personas
               </a>
-            </li>            
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'afp-onp'|active_if_path_match:request}}"
+              href="{% url 'dashboard:afp-onp-list'%}">
+                AFP/ONP
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="bd-links-link d-inline-block rounded {{'company'|active_if_path_match:request}}"
+              href="{% url 'dashboard:company-list'%}">
+                Empresa
+              </a>
+            </li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -119,6 +144,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    
     {% block script %}
     <script src="{% static 'rest_framework/js/jquery-3.5.1.min.js' %}"></script>
     <script src="{% static 'rest_framework/js/bootstrap.min.js' %}"></script>
@@ -127,6 +153,8 @@
     <!-- <script src="../../assets/js/vendor/holder.min.js"></script> -->
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
-     {% endblock %}
+     {% endblock %}     
+     {% block more_scripts %}
+     {% endblock %}     
   </body>
 </html>

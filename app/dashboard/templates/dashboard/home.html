@@ -88,6 +88,14 @@
   <link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css"  type="text/css">
 {% endblock %}
 {% block body %}
+<div class="content-main">
+    <div class="page-header">      
+        <a href="{% url 'dashboard:invoices' %}" id="list-view"><h2 style="display: inline;"> Boletas </h2> </a>  <h2 style="display: inline;">&nbsp/&nbsp Boleta</h2>
+    </div>
+</div>
+
+<br>
+
 <div class="invoice bordered d-flex d-column" id="invoice">
     <div class="row d-flex align-end">
         <div class="col-md-6">

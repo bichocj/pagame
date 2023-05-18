@@ -80,3 +80,18 @@ body {
 .fw-semibold {
     font-weight: 600!important;
 }
+
+th 
+{
+  vertical-align: bottom;
+}
+
+th.vertical-text
+{
+  -ms-writing-mode: tb-rl;
+  -webkit-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  text-align: start;
+}

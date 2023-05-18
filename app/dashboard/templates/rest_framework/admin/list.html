@@ -6,7 +6,7 @@
   <thead>
     <tr>
       {% for column in view|get_columns_labels:columns %}
-      <th>{{ column }}</th>
+      <th class="{{column|custom_class}}">{{ column }}</th>
       {% endfor %}
       <th class="col-xs-1"></th>
     </tr>
@@ -16,7 +16,7 @@
     {% for row in results %}
     <tr>
       {% for key, value in row|items %} {% if key in columns %}
-      <td {{ value|add_nested_class }}>{{ value|format_value }}</td>
+      <td {{ value|add_nested_class }}>{{ value|format_bool|format_value }}</td>
       {% endif %} {% endfor %}
       <td>
         {% if row.url %}
