@@ -176,6 +176,8 @@ REST_FRAMEWORK = {
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.OrderingFilter",
     ],
+    # "DATETIME_FORMAT": "%Y-%m-%d %H:%M %p",
+    "DATETIME_FORMAT": "%Y-%m-%d %H:%M",
 }
 
 APPEND_SLASH = True
