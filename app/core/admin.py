@@ -1,7 +1,5 @@
 from django.contrib import admin
-from core.models import (
-    Person,
-)
+from core.models import Person, AfpOnp, Company
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -10,3 +8,5 @@ class PersonAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Person, PersonAdmin)
+admin.site.register(AfpOnp)
+admin.site.register(Company)
