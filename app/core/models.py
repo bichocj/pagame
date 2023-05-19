@@ -104,7 +104,7 @@ class Dayli(models.Model):
     class Meta:
         verbose_name = "asistencia"
         verbose_name_plural = "asistencias"
-        ordering = ("employ__person__name",)
+        ordering = ("-start_at_1",)
 
 
 class Invoice(models.Model):

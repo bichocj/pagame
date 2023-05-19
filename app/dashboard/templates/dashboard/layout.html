@@ -156,5 +156,40 @@
      {% endblock %}     
      {% block more_scripts %}
      {% endblock %}     
+     <script>
+       $(document).ready(function() {
+        {% if 'attendance'|active_if_path_match:request %}
+          const $start_at_1 = $('[name="start_at_1"]');
+          const $end_at_1 = $('[name="end_at_1"]');
+          const $start_at_2 = $('[name="start_at_2"]');
+          const $end_at_2 = $('[name="end_at_2"]');
+
+          $start_at_1.on('change', function(e){
+            const start_at_1 = $start_at_1.val();
+            const end_at_1 = $end_at_1.val();
+            if(end_at_1 === '' || end_at_1 < start_at_1) {
+              $end_at_1.val(start_at_1);
+            }
+          });
+
+          $end_at_1.on('change', function(e){
+            const end_at_1 = $end_at_1.val();
+            const start_at_2 = $start_at_2.val();
+            if(start_at_2 !== '' &&  start_at_2 < end_at_1) {
+              $start_at_2.val(end_at_1);
+              $($start_at_2).trigger("change");
+            }
+          });
+
+          $start_at_2.on('change', function(e){
+            const start_at_2 = $start_at_2.val();
+            const end_at_2 = $end_at_2.val();
+            if(end_at_2 === '' || end_at_2 < start_at_2) {
+              $end_at_2.val(start_at_2);
+            }
+          });
+        {% endif %}
+       });
+     </script>
   </body>
 </html>

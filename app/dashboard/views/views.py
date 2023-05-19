@@ -15,9 +15,13 @@ from core import models
 
 @login_required
 def home_view(request):
-    company = models.Company.objects.filter(is_principal=True).first()
-    message = "hello low"
     return render(request, "dashboard/home.html", locals())
+
+
+def invoice_view(request, month_number, employ_id):
+    employ = models.Employ.objects.select_related("person").get(id=employ_id)
+    company = models.Company.objects.filter(is_principal=True).first()
+    return render(request, "dashboard/invoice.html", locals())
 
 
 @login_required

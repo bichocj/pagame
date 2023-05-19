@@ -78,9 +78,12 @@ class DayliPathSerializer(BasePathSerializer):
 
         cost_per_hour = Decimal("%0.2f" % round(employ.salary / 30 / 8, 3))
 
-        data["hn"] = Decimal(0)
+        data["hn"] = 0
         data["h25"] = 0
         data["h35"] = 0
+        data["hn_amount"] = 0
+        data["h25_amount"] = 0
+        data["h35_amount"] = 0
 
         if total_hours <= 8:
             data["hn"] = total_hours

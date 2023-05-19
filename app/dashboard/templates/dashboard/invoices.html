@@ -22,10 +22,9 @@
             {% for employ in employees %}
             <tr>
                 <td>{{ employ.person }}</td>
-                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
-                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
-                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
-                <td><a href="{% url 'dashboard:invoices_detail' %}">Ver</a></td>                
+                {% for month_number in months_available %}
+                <td><a href="{% url 'dashboard:invoices_detail' month_number employ.id %}">Ver</a></td>
+                {% endfor %}
             </tr>
             {% endfor %}
         </tbody>

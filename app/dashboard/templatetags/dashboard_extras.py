@@ -57,7 +57,7 @@ def custom_class(column_label):
 @register.filter
 def format_bool(value):
     if value is None or isinstance(value, bool):
-        return "%s" % {True: "Si", False: "No", None: "ninguno"}[value]
+        return "%s" % {True: "Si", False: "No", None: ""}[value]
     return value
 
 
