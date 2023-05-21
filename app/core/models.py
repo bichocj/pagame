@@ -51,9 +51,15 @@ class AfpOnp(models.Model):
 
 class Employ(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE, verbose_name="persona")
+    start_at = models.DateField("Fec. Ingreso", null=True, blank=True)
+    employ_type = models.CharField(
+        "Tipo de Trabajador", max_length=50, default="OBRERO"
+    )
+
     afp_onp = models.ForeignKey(
         AfpOnp, on_delete=models.CASCADE, verbose_name="AFP/ONP"
     )
+    cuspp = models.CharField(max_length=20, default="")
     has_children = models.BooleanField("tiene hijos", default=False)
     salary = models.DecimalField("Salario", max_digits=7, decimal_places=2)
     bank_name = models.CharField("Banco donde se le paga", max_length=100)
@@ -83,45 +89,73 @@ class Dayli(models.Model):
         "horas normales", blank=True, null=True, max_digits=6, decimal_places=2
     )
     hn_amount = models.DecimalField(
-        "importe horas normales", blank=True, null=True, max_digits=6, decimal_places=2
+        "s/. horas normales", blank=True, null=True, max_digits=6, decimal_places=2
     )
     h25 = models.DecimalField(
         "horas al 25%", blank=True, null=True, max_digits=6, decimal_places=2
     )
     h25_amount = models.DecimalField(
-        "importe horas al 25%", blank=True, null=True, max_digits=6, decimal_places=2
+        "s/. horas al 25%", blank=True, null=True, max_digits=6, decimal_places=2
     )
     h35 = models.DecimalField(
         "horas al 35%", blank=True, null=True, max_digits=6, decimal_places=2
     )
     h35_amount = models.DecimalField(
-        "importe horas al 35%", blank=True, null=True, max_digits=6, decimal_places=2
+        "s/. horas al 35%", blank=True, null=True, max_digits=6, decimal_places=2
     )
     total = models.DecimalField(
-        "importe", blank=True, null=True, max_digits=6, decimal_places=2
+        "s/.", blank=True, null=True, max_digits=6, decimal_places=2
     )
 
     class Meta:
         verbose_name = "asistencia"
         verbose_name_plural = "asistencias"
-        ordering = ("-start_at_1",)
+        ordering = ("-id",)
 
 
 class Invoice(models.Model):
+    is_closed = models.BooleanField("bloqueado", default=False)
     employ = models.ForeignKey(
         Employ, on_delete=models.CASCADE, verbose_name="empleado"
     )
     period = models.DateField()
-    days_worked = models.IntegerField()
-    days_lazy = models.IntegerField()
-    salay = models.DecimalField(
-        "salario", blank=True, null=True, max_digits=6, decimal_places=2
+    days_worked = models.IntegerField(default=0)
+    days_lazy = models.IntegerField(default=0)
+    salary = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    hn_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    h25_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    h35_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    familiar_amount = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    afp_mandatory = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    afp_prima = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    afp_commision = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    total_income = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    total_income_company = models.DecimalField(
+        max_digits=7, decimal_places=2, default=0
     )
+    total_outcome = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    essalud = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    created_at = models.DateField(auto_created=True, auto_now=True)
 
     class Meta:
         verbose_name = "boleta"
         verbose_name_plural = "boletas"
         ordering = ("employ__person__name",)
+
+
+class InvoiceDetails(models.Model):
+    class ConcetType(models.IntegerChoices):
+        INCOME = 1, ("Ingresos")
+        OUTCOME = 2, ("Descuentos")
+        INCOME_COMPANY = 3, ("Aportaciones")
+
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now=True, auto_created=True)
+    concept = models.CharField("concepto", max_length=50)
+    amount = models.DecimalField(
+        "monto", blank=True, null=True, max_digits=7, decimal_places=2
+    )
+    concept_type = models.IntegerField(choices=ConcetType.choices)
 
 
 class Company(models.Model):
@@ -131,6 +165,12 @@ class Company(models.Model):
     address = models.CharField("dirección", max_length=200)
     signer_name = models.CharField("nombre del firmador", max_length=200)
     signer_title = models.CharField("cargo del firmador", max_length=200)
+    familiar_amount = models.DecimalField(
+        "asignación familiar s/.", blank=True, null=True, max_digits=5, decimal_places=2
+    )
+    essalud = models.DecimalField(
+        "essalud %", blank=True, null=True, max_digits=5, decimal_places=2
+    )
 
     class Meta:
         verbose_name = "empresa"

@@ -20,10 +20,13 @@ class EmployPathSerializer(BasePathSerializer):
             "salary",
             "afp__onp",
             "afp_onp",
+            "cuspp",
             "has_children",
             "bank_name",
             "bank_account_number",
             "bank_account_number_cci",
+            "start_at",
+            "employ_type",
             "url",
         ]
         extra_kwargs = {

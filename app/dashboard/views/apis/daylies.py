@@ -135,7 +135,6 @@ class DayliPathSerializer(BasePathSerializer):
 
 class DayliDetalSerializer(BasePathSerializer):
     empleado = serializers.StringRelatedField(source="employ")
-    # salario = serializers.CharField(source="employ__salary")
     salario = serializers.ReadOnlyField(source="employ.salary")
 
     @staticmethod
@@ -177,8 +176,6 @@ class DayliViewSet(viewsets.ModelViewSet):
     queryset = Dayli.objects.all()
     serializer_class = DayliPathSerializer
     detail_serializer = DayliDetalSerializer
-
-    # ordering_fields = ["empleado", "start_at_1"]
 
     filterset_fields = {
         "employ__person__name": ["contains"],

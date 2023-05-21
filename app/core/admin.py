@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import Person, AfpOnp, Company
+from core.models import Person, AfpOnp, Company, Invoice
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -10,3 +10,4 @@ class PersonAdmin(admin.ModelAdmin):
 admin.site.register(Person, PersonAdmin)
 admin.site.register(AfpOnp)
 admin.site.register(Company)
+admin.site.register(Invoice)

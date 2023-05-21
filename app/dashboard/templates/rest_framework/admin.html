@@ -209,9 +209,7 @@
             event.preventDefault();
             $.ajax({
               type : 'DELETE',
-              url : '{{ request.get_full_path }}',
-              headers: { 'x-some-other-header': 'some value' },
-              data: $('#update_form').serialize(),
+              url : '{{ request.get_full_path }}',              
               success: function (data) {
                   window.location.href = '{{view|get_home_path}}';
               },

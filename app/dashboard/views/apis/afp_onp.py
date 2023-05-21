@@ -11,7 +11,7 @@ class AfpOnpPathSerializer(BasePathSerializer):
 
     class Meta:
         model = AfpOnp
-        fields = ["name", "commision", "prima", "mandatory", "url"]
+        fields = ["name", "mandatory", "prima", "commision", "url"]
 
 
 class AfpOnpViewSet(viewsets.ModelViewSet):

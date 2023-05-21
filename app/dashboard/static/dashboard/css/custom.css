@@ -94,4 +94,5 @@ th.vertical-text
   transform: rotate(180deg);
   white-space: nowrap;
   text-align: start;
+  vertical-align: middle !important;
 }

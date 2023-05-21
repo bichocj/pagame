@@ -44,11 +44,11 @@ def active_if_path_match(keyword, request):
 def custom_class(column_label):
     vertical_columns_labels = (
         "Horas normales",
-        "Importe horas normales",
+        "S/. horas normales",
         "Horas al 25%",
-        "Importe horas al 25%",
+        "S/. horas al 25%",
         "Horas al 35%",
-        "Importe horas al 35%",
+        "S/. horas al 35%",
     )
     if column_label in vertical_columns_labels:
         return "vertical-text"
@@ -58,6 +58,13 @@ def custom_class(column_label):
 def format_bool(value):
     if value is None or isinstance(value, bool):
         return "%s" % {True: "Si", False: "No", None: ""}[value]
+    return value
+
+
+@register.filter
+def format_None(value):
+    if value is None:
+        return ""
     return value
 
 
@@ -79,3 +86,12 @@ def get_month_name_by_number(value):
     }
 
     return month_dict[value]
+
+
+@register.filter
+def hours_format(value):
+    hours = int(value)
+    mins = value - hours
+    if mins > 0:
+        return f"{hours}:{int(mins*60)}"
+    return f"{hours}:00"

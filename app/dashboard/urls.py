@@ -6,7 +6,7 @@ app_name = "dashboard"
 urlpatterns = [
     path("", view=views.home_view, name="home"),
     path(
-        "invoices/detail/<int:month_number>/<int:employ_id>",
+        "invoices/detail/<int:month_number>/<int:employ_id>/",
         view=views.invoice_view,
         name="invoices_detail",
     ),

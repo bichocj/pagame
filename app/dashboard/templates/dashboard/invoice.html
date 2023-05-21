@@ -1,5 +1,6 @@
 {% extends 'dashboard/layout.html' %}
 {% load static %}
+{% load mathfilters %}
 {% load dashboard_extras %}
 {% block title %}APP | administrador{% endblock %} 
 {% block style %}
@@ -88,9 +89,13 @@
   <link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css"  type="text/css">
 {% endblock %}
 {% block body %}
+{% if month_number is 7 or month_number is 12 %}
+ es {{ month_number|get_month_name_by_number}}
+{% endif %}
+
 <div class="content-main">
     <div class="page-header">      
-        <a href="{% url 'dashboard:invoices' %}" id="list-view"><h2 style="display: inline;"> Boletas </h2> </a>  <h2 style="display: inline;">&nbsp/&nbsp Boleta</h2>
+        <a href="{% url 'dashboard:invoices' %}" id="list-view"><h2 style="display: inline;"> Boletas </h2> </a>  <h2 style="display: inline;">&nbsp/&nbsp Boleta - {{employ.person}} - {{month_number|get_month_name_by_number}}</h2>
     </div>
 </div>
 
@@ -103,10 +108,9 @@
             <div class="d-block">{{company.address}}</div>
             <div class="d-block">RUC N° {{company.ruc}}</div>
         </div>
-        <div class="col-md-6 text-right ">            
-            <div class="d-block">DB N¬ 00-2022</div>
-            <div class="d-block">Planilla Marzo 2021</div>
-            <div class="d-block">Fecha de Pago 31/03/2021</div>
+        <div class="col-md-6 text-right ">
+            <div class="d-block">Periodo {{month_number|get_month_name_by_number}} {{current_year}}</div>
+            <div class="d-block">Fecha de Emisión {{invoice.created_at|date:"Y-m-d"}}</div>
         </div>
     </div>
     <div class="clearfix"></div>
@@ -115,73 +119,67 @@
         <div class="col-md-4">
             <table class="table">
                 <tr>
-                    <td>Codigo</td>
-                    <td>12412412</td>
-                </tr>
-                <tr>
                     <td>Trabajador</td>
                     <td>{{employ.person}}</td>
                 </tr>
                 <tr>
-                    <td>Tipo</td>
-                    <td>Trabajador</td>
-                </tr>            
-                <tr>
-                    <td>Nro</td>
-                    <td>4535438168</td>
+                    <td>Tipo/Nro Documento</td>
+                    <td>DNI {{employ.person.dni}}</td>
                 </tr>
                 <tr>
-                    <td>Fec. Nacimiento</td>
-                    <td>23/02/1988</td>
-                </tr>
-            </table>                    
-        </div>
-        <div class="col-md-4">
-            <table class="table">
-                <tr>
-                    <td>Codigo</td>
-                    <td>12412412</td>
+                    <td>Situación</td>
+                    <td>ACTIVO O SUBSIDIADO</td>
                 </tr>
                 <tr>
-                    <td>Trabajador</td>
-                    <td>Gutierrez Mamani Javier Carlos</td>
-                </tr>
-                <tr>
-                    <td>Tipo</td>
-                    <td>Trabajador</td>
-                </tr>            
-                <tr>
-                    <td>Nro</td>
-                    <td>4535438168</td>
-                </tr>
-                <tr>
-                    <td>Fec. Nacimiento</td>
-                    <td>23/02/1988</td>
+                    <td>Condición</td>
+                    <td>Domiciliado</td>
                 </tr>
             </table>                    
         </div>
         <div class="col-md-4">
             <table class="table">
                 <tr>
-                    <td>Codigo</td>
-                    <td>12412412</td>
+                    <td>Fecha Ingreso</td> 
+                    <td>{{employ.start_at|date:"Y-m-d"}}</td>
                 </tr>
                 <tr>
-                    <td>Trabajador</td>
-                    <td>Gutierrez Mamani Javier Carlos</td>
+                    <td>Tipo de Trabajador</td>
+                    <td>{{employ.employ_type}}</td>
                 </tr>
                 <tr>
-                    <td>Tipo</td>
-                    <td>Trabajador</td>
+                    <td>Régime Pensionario</td>
+                    <td>{% if employ.afp_onp.is_onp %}ONP{%else%}AFP{% endif %}</td>
+                </tr>
+                {% if not employ.afp_onp.is_onp %}
+                <tr>
+                    <td>CUSPP</td>
+                    <td>{{employ.cuspp}}</td>
+                </tr>
+                {% endif %}
+            </table>                    
+        </div>
+        <div class="col-md-4">
+            <table class="table">
+                <tr>
+                    <td>Días Laborados</td>
+                    <td>{{days_worked}}</td>
+                </tr>
+                <tr>
+                    <td>Días No Laborados</td>
+                    <td>{{days_without_worked}}</td>
+                </tr>
+                <tr>
+                    <td>Días Subsidiados</td>
+                    <td>0</td>
                 </tr>            
                 <tr>
-                    <td>Nro</td>
-                    <td>4535438168</td>
+                    <td>Jornada Ordinaria Total Horas</td>
+                    <td>{{total_hn|hours_format}}</td>
                 </tr>
                 <tr>
-                    <td>Fec. Nacimiento</td>
-                    <td>23/02/1988</td>
-                </tr>
+                    <td>Sobretiempo Total Horas</td>
+                    <td>{{total_hextras|hours_format}}</td>
+                </tr>                
             </table>                    
         </div>
     </div>    
@@ -194,51 +192,91 @@
         <div class="col-md-4 b-b">
             <table class="table">
                 <tr>
-                    <td>Remuneración Basica</td>
-                    <td>1000</td>                    
+                    <td>REMUNERACIÓN O JORNAL BÁSICO</td>
+                    <td>{{invoice.hn_amount}}</td>
                 </tr>
+                {% if invoice.h25_amount %}
                 <tr>
-                    <td>Movilidad</td>
-                    <td>1000</td>                    
+                    <td>TRABAJO SOBRETIEMPO (H. EXTRAS 25%)</td>
+                    <td>{{invoice.h25_amount}}</td>
                 </tr>
+                {% endif %}
+                {% if invoice.h35_amount %}
+                <tr>
+                    <td>TRABAJO SOBRETIEMPO (H. EXTRAS 35%)</td>
+                    <td>{{invoice.h35_amount}}</td>
+                </tr>
+                {% endif %}
+                {% if invoice.familiar_amount %}
+                <tr>
+                    <td>ASIGNACIÓN FAMILIAR</td>
+                    <td>{{invoice.familiar_amount}}</td>
+                </tr>
+                {% endif %}
+                {% for i in invoice_details %}
+                {% if i.concept_type == 1 %}
+                <tr>
+                    <td>{{i.concept}}</td>
+                    <td>{{i.amount}}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
             </table>           
         </div>
         <div class="col-md-4 b-l b-b">
             <table class="table">
+                {% if employ.afp_onp.is_onp %}
                 <tr>
                     <td>AFP Oportacion Obligat</td>
-                    <td>10</td>
-                    <td>385</td>
+                    <td>{{invoice.afp_mandatory}}%</td>
+                    <td>{{invoice.afp_mandatory|div:100|mul:invoice.salary|floatformat:2}}</td>
                 </tr>
                 <tr>
-                    <td>AFP Oportacion Obligat</td>
-                    <td>10</td>
-                    <td>385</td>
+                    <td>AFP. Prima de Seguro</td>
+                    <td>{{invoice.afp_prima}}%</td>
+                    <td>{{invoice.afp_prima|div:100|mul:invoice.salary|floatformat:2}}</td>
                 </tr>
                 <tr>
-                    <td>AFP Oportacion Obligat</td>
-                    <td>10</td>
-                    <td>385</td>
+                    <td>AFP. Comisión sobre la RA</td>
+                    <td>{{invoice.afp_commision}}%</td>
+                    <td>{{invoice.afp_commision|div:100|mul:invoice.salary|floatformat:2}}</td>
                 </tr>
+                {% else %}
                 <tr>
-                    <td>AFP Oportacion Obligat</td>
-                    <td>10</td>
-                    <td>385</td>
+                    <tr>
+                        <td>ONP</td>
+                        <td>{{invoice.afp_mandatory}}%</td>
+                        <td>{{invoice.afp_mandatory|div:100|mul:invoice.salary|floatformat:2}}</td>
+                    </tr>
                 </tr>
+                {% endif %}
+                {% for i in invoice_details %}
+                {% if i.concept_type == 2 %}
+                <tr>
+                    <td>{{i.concept}}</td>
+                    <td></td>
+                    <td>{{i.amount}}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
             </table>            
         </div>
         <div class="col-md-4 b-l b-b">
             <table class="table">
                 <tr>
                     <td>ESSALUD</td>
-                    <td>9.00%</td>
-                    <td>495.00</td>
+                    <td>{{invoice.essalud}}%</td>
+                    <td>{{invoice.salary|mul:invoice.essalud|div:100|floatformat:2}}</td>
                 </tr>
+                {% for i in invoice_details %}
+                {% if i.concept_type == 3 %}
                 <tr>
-                    <td>Seguo Vida Ley</td>
+                    <td>{{i.concept}}</td>
                     <td></td>
-                    <td>495.00</td>
+                    <td>{{i.amount}}</td>
                 </tr>
+                {% endif %}
+                {% endfor %}
             </table>
         </div>
     </div>
@@ -247,23 +285,23 @@
             <table class="table m-0">
                 <tr>                    
                     <td>TOTAL INGRESOS</td>
-                    <td>S/. 1358</td>
+                    <td>S/. {{invoice.total_income}}</td>
                 </tr>
             </table>
         </div>
         <div class="col-md-4 b-b b-l">
             <table class="table m-0">
                 <tr>                    
-                    <td>TOTAL INGRESOS</td>
-                    <td>S/. 1358</td>
+                    <td>TOTAL DESCUENTOS</td>
+                    <td>S/. {{invoice.total_outcome}}</td>
                 </tr>
             </table>
         </div>
         <div class="col-md-4 b-b b-l">
             <table class="table m-0">
                 <tr>                    
-                    <td>TOTAL INGRESOS</td>
-                    <td>S/. 1358</td>
+                    <td>TOTAL APORTACIONES</td>
+                    <td>S/. {{invoice.total_income_company}}</td>
                 </tr>
                 </table>
         </div>
@@ -271,7 +309,7 @@
     <div class="">        
         <p>Importe Abonnado a cuenta 135135135135 del banco de creado del Perú</p>
         <div class="text-center">
-            <p>Neto a Pagar S/. <span class="bordered p-2 m-2">135813</span></p>
+            <p>Neto a Pagar S/. <span class="bordered p-2 m-2">{{invoice.total_income|add:invoice.total_income_company|sub:invoice.total_outcome}}</span></p>
         </div>        
         <div></div>
         <div class="row">
@@ -299,15 +337,181 @@
 </div>
 <br/>
 <div class="text-center">
-<button class="btn btn-primary" id="printButton">
-    Imprimir
-  </button>
+    {% if invoice.is_closed %}
+    <button class="btn btn-primary" id="printButton">
+        Imprimir
+    </button>
+    {% else %}
+    <form action="." method="post">
+        {% csrf_token %}
+        <input type="hidden" value="1" name="closed">
+        <button class="btn btn-primary">
+            Guardar y Finalizar
+        </button>
+        <div class="alert alert-warning" role="alert">Al presionar <strong>"Guardar y Finalizar"</strong>, la boleta quedará bloqueada de cualquier edición</div>
+    </form>
+    {% endif %}
 </div>
 <br/>
+<div class="content-main">
+    <div class="page-header">      
+        <h2 style="display: inline;">Detalle de la Boleta</h2>
+    </div>
+</div>
+<h3>Extras</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Concepto</th>
+            <th>Monto</th>
+            <th>Tipo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in invoice_details %}
+        <tr>
+            <td>{{i.concept}}</td>
+            <td>s/. {{i.amount}}</td>
+            <td>{{i.get_concept_type_display}}</td>
+            <td>
+                {% if not invoice.is_closed %}
+                <form action="/api/invoice-details/{{i.id}}/" class="delete_form" method="POST">                    
+                    <button class="btn btn-danger" type="submit">Quitar</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% if not invoice.is_closed %}
+        <tr>
+            <form action="/api/invoice-details/" method="POST" id="post_form">
+                <td>
+                    {% csrf_token %}
+                    <input type="hidden" name="invoice" value="{{invoice.id}}">
+                    <input type="text" class="form-control" name="concept" placeholder="Concepto">
+                </td>
+                <td><input type="text" class="form-control" name="amount" placeholder="Monto"></td>
+                <td>
+                    <select name="concept_type" class="form-control">
+                        <option selected disabled>Seleccione uno</option>
+                        <option value="1">Ingresos</option>
+                        <option value="2">Descuentos</option>
+                        <option value="3">Aportes</option>
+                    </select>
+                </td>
+                <td><button class="btn btn-default" type="submit">Agregar</button></td>
+            </form>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+<br/>
+<h3>Asistencias</h3>
+<table class="table table-striped">
+    <thead>
+       <tr>
+          <th class="None">Fecha</th>
+          <th class="None">Entrada 1</th>
+          <th class="None">Salida 1</th>
+          <th class="None">Entrada 2</th>
+          <th class="None">Salida 2</th>
+          <th class="vertical-text">Horas normales</th>
+          <th class="vertical-text">s/. horas normales</th>
+          <th class="vertical-text">Horas al 25%</th>
+          <th class="vertical-text">s/. horas al 25%</th>
+          <th class="vertical-text">Horas al 35%</th>
+          <th class="vertical-text">s/. horas al 35%</th>
+          <th class="vertical-text">Total</th>
+          <th class="col-xs-1"></th>
+       </tr>
+    </thead>
+    <tbody>
+        {% for a in attendances %}
+        <tr>
+            <td>{{a.start_at_1|date:"Y-m-d"}}</td>
+            <td>{{a.start_at_1|date:"H:i"}}</td>
+            <td>{{a.end_at_1|date:"H:i"}}</td>
+            <td>{{a.start_at_2|date:"H:i"}}</td>
+            <td>{{a.end_at_2|date:"H:i"}}</td>
+            <td class="text-center">{{a.hn}}</td>
+            <td class="text-center">{{a.hn_amount}}</td>
+            <td class="text-center">{{a.h25}}</td>
+            <td class="text-center">{{a.h25_amount}}</td>
+            <td class="text-center">{{a.h35}}</td>
+            <td class="text-center">{{a.h35_amount}}</td>
+            <td class="text-center">{{a.total}}</td>
+            <td>
+                <a href="/api/attendance/{{a.id}}/"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+             </td>
+        </tr>
+        {% endfor %}       
+    </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="text-center">{{total_hn}}</td>
+            <td class="text-center">s/. {{total_hn_amount}}</td>
+            <td class="text-center">{{total_h25}}</td>
+            <td class="text-center">s/. {{total_h25_amount}}</td>
+            <td class="text-center">{{total_h35}}</td>
+            <td class="text-center">s/. {{total_h35_amount}}</td>
+            <td class="text-center">s/. {{total_total}}</td>
+        </tr>
+    </tfoot>
+  </table>
 <br/>
 {% endblock %}
 {% block more_scripts %}
-<!-- <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script> -->
+<script>
+    $('#post_form').submit(function() {
+        event.preventDefault();
+        
+        // clear previous errors
+        $('.help-block').remove();
+        $('.has-error').removeClass('has-error');
+        $.ajax({
+            type : 'POST',
+            url : $('#post_form').attr('action'),              
+            data: $('#post_form').serialize(),
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function(data) {
+                for (const [key, value] of Object.entries(data.responseJSON)) {                  
+                  const $field = $(`[name="${key}"]`);
+                  if ($field.length) {
+                    const $parent = $field.parent();
+                    $parent.append(`<span class="help-block">${value}</span>`) // appends span to div.col
+                    $parent.parent().addClass('has-error'); // add has-error to div.form-control
+                  } else {
+                    alert(`${key}: ${value}`);
+                  }
+                }
+            }
+        });
+    });
+    $(".delete_form").on("submit", function( event ) {
+        event.preventDefault();
+        console.log($(event.target).serialize());
+        $.ajax({
+            type: 'DELETE',
+            url: $(event.target).attr('action'),
+            headers: {"X-CSRFTOKEN": "{{csrf_token}}"},
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+    });
+</script>
+{% if invoice.is_closed %}
 <script src="{% static 'dashboard/js/printjs.js' %}"></script>
 <script>
     function print() {
@@ -319,4 +523,5 @@
     }
     document.getElementById('printButton').addEventListener ("click", print)
 </script>
+{% endif %}
 {% endblock %}
