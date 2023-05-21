@@ -1,7 +1,12 @@
-app = "bold-django-123"
+# fly.toml app configuration file generated for grupo-proteccion-ambiental on 2023-05-21T00:15:22-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "grupo-proteccion-ambiental"
 primary_region = "ewr"
-kill_timeout = "5s"
 kill_signal = "SIGINT"
+kill_timeout = "5s"
 
 [[services]]
   protocol = "tcp"
