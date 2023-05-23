@@ -428,7 +428,7 @@
     </thead>
     <tbody>
         {% for a in attendances %}
-        <tr>
+        <tr {% if invoice.is_closed and not a.is_closed %}style="text-decoration: line-through;" data-toggle="tooltip" data-placement="top" title="Esta asistencia fue creada despues de 'Guardar y Bloquear' la boleta, no se incluye en la suma de horas " {%endif%}>
             <td>{{a.start_at_1|date:"Y-m-d"}}</td>
             <td>{{a.start_at_1|date:"H:i"}}</td>
             <td>{{a.end_at_1|date:"H:i"}}</td>
@@ -522,6 +522,7 @@
         });
     }
     document.getElementById('printButton').addEventListener ("click", print)
+    $('[data-toggle="tooltip"]').tooltip();
 </script>
 {% endif %}
 {% endblock %}

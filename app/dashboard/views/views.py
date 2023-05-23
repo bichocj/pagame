@@ -36,10 +36,15 @@ def invoice_view(request, month_number, employ_id):
 
     try:
         invoice = models.Invoice.objects.get(employ=employ, period=period)
-        if is_closed or invoice.is_closed:
+        if is_closed:
             invoice.is_closed = True
             invoice.save()
-            return render(request, "dashboard/invoice.html", locals())
+            models.Dayli.objects.filter(
+                employ=employ,
+                start_at_1__month=month_number,
+                start_at_1__year=current_year,
+            ).update(is_closed=invoice.is_closed)
+
     except models.Invoice.DoesNotExist:
         invoice = models.Invoice.objects.create(employ=employ, period=period)
         if month_number == 7 or month_number == 12:
@@ -72,13 +77,23 @@ def invoice_view(request, month_number, employ_id):
     total_total = 0
 
     for a in attendances:
-        total_hn += a.hn
-        total_hn_amount += a.hn_amount
-        total_h25 += a.h25
-        total_h25_amount += a.h25_amount
-        total_h35 += a.h35
-        total_h35_amount += a.h35_amount
-        total_total += a.total
+        if invoice.is_closed:
+            if a.is_closed:
+                total_hn += a.hn
+                total_hn_amount += a.hn_amount
+                total_h25 += a.h25
+                total_h25_amount += a.h25_amount
+                total_h35 += a.h35
+                total_h35_amount += a.h35_amount
+                total_total += a.total
+        else:
+            total_hn += a.hn
+            total_hn_amount += a.hn_amount
+            total_h25 += a.h25
+            total_h25_amount += a.h25_amount
+            total_h35 += a.h35
+            total_h35_amount += a.h35_amount
+            total_total += a.total
 
     total_hextras = total_h25 + total_h35
 
@@ -108,21 +123,22 @@ def invoice_view(request, month_number, employ_id):
         if i.concept_type == 3:
             total_income_company += i.amount
 
-    invoice.salary = employ.salary
-    invoice.hn_amount = total_hn_amount
-    invoice.h25_amount = total_h25_amount
-    invoice.h35_amount = total_h35_amount
-    invoice.familiar_amount = familiar_amount
-    invoice.essalud = company.essalud
-    invoice.total_income = total_income
-    invoice.total_outcome = total_outcome
-    invoice.total_income_company = total_income_company
-    invoice.afp_mandatory = employ.afp_onp.mandatory
-    invoice.afp_prima = employ.afp_onp.prima
-    invoice.afp_commision = employ.afp_onp.commision
-    invoice.is_closed = is_closed
+    if not invoice.is_closed:
+        invoice.salary = employ.salary
+        invoice.hn_amount = total_hn_amount
+        invoice.h25_amount = total_h25_amount
+        invoice.h35_amount = total_h35_amount
+        invoice.familiar_amount = familiar_amount
+        invoice.essalud = company.essalud
+        invoice.total_income = total_income
+        invoice.total_outcome = total_outcome
+        invoice.total_income_company = total_income_company
+        invoice.afp_mandatory = employ.afp_onp.mandatory
+        invoice.afp_prima = employ.afp_onp.prima
+        invoice.afp_commision = employ.afp_onp.commision
+        invoice.is_closed = is_closed
 
-    invoice.save()
+        invoice.save()
 
     return render(request, "dashboard/invoice.html", locals())
 

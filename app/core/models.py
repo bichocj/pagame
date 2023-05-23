@@ -106,6 +106,7 @@ class Dayli(models.Model):
     total = models.DecimalField(
         "s/.", blank=True, null=True, max_digits=6, decimal_places=2
     )
+    is_closed = models.BooleanField("bloqueado", default=False)
 
     class Meta:
         verbose_name = "asistencia"
