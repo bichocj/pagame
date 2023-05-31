@@ -36,9 +36,7 @@ class AfpOnp(models.Model):
     mandatory = models.DecimalField(
         "obligatorio", default=0.0, max_digits=6, decimal_places=2
     )
-    is_onp = models.DecimalField(
-        "es onp", default=False, max_digits=6, decimal_places=2
-    )
+    is_onp = models.BooleanField("es onp", default=False)
 
     class Meta:
         verbose_name = "AFP/ONP"

@@ -89,9 +89,6 @@
   <link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css"  type="text/css">
 {% endblock %}
 {% block body %}
-{% if month_number is 7 or month_number is 12 %}
- es {{ month_number|get_month_name_by_number}}
-{% endif %}
 
 <div class="content-main">
     <div class="page-header">      
@@ -225,7 +222,7 @@
         </div>
         <div class="col-md-4 b-l b-b">
             <table class="table">
-                {% if employ.afp_onp.is_onp %}
+                {% if not employ.afp_onp.is_onp %}
                 <tr>
                     <td>AFP Oportacion Obligat</td>
                     <td>{{invoice.afp_mandatory}}%</td>
