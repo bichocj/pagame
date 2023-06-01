@@ -113,7 +113,7 @@ def invoice_view(request, month_number, employ_id):
     total_income = round(
         (total_hn_amount + total_h25_amount + total_h35_amount + familiar_amount), 2
     )
-    total_income_company = (company.essalud / 100) * employ.salary
+    total_income_company = 0
 
     for i in invoice_details:
         if i.concept_type == 1:
@@ -122,6 +122,8 @@ def invoice_view(request, month_number, employ_id):
             total_outcome += i.amount
         if i.concept_type == 3:
             total_income_company += i.amount
+
+    total_income_company += (company.essalud / 100) * total_income
 
     if not invoice.is_closed:
         invoice.salary = employ.salary
