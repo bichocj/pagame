@@ -263,7 +263,7 @@
                 <tr>
                     <td>ESSALUD</td>
                     <td>{{invoice.essalud}}%</td>
-                    <td>{{invoice.salary|mul:invoice.essalud|div:100|floatformat:2}}</td>
+                    <td>{{invoice.total_income|mul:invoice.essalud|div:100|floatformat:2}}</td>
                 </tr>
                 {% for i in invoice_details %}
                 {% if i.concept_type == 3 %}
