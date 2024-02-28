@@ -147,7 +147,7 @@ def invoice_view(request, month_number, employ_id):
 
 @login_required
 def invoices_view(request):
-    year = 2023
+    year = datetime.datetime.now().year
     employees = models.Employ.objects.all()
     months_available = (
         models.Dayli.objects.annotate(year=ExtractYear("start_at_1"))
