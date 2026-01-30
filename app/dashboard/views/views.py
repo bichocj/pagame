@@ -1,6 +1,8 @@
 import datetime
 from calendar import monthrange
 from decimal import Decimal
+from django.utils import timezone
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import F, Sum
 from django.db.models.functions import ExtractMonth, ExtractYear
@@ -147,16 +149,19 @@ def invoice_view(request, month_number, employ_id):
 
 @login_required
 def invoices_view(request):
-    year = datetime.datetime.now().year
+    current_year = timezone.now().year
+
     employees = models.Employ.objects.all()
+    
     months_available = (
-        models.Dayli.objects.annotate(year=ExtractYear("start_at_1"))
+        models.Dayli.objects
+        .filter(start_at_1__year=current_year)
         .annotate(month=ExtractMonth("start_at_1"))
         .values_list("month", flat=True)
         .distinct()
-        .filter(start_at_1__year=year)
         .order_by("month")
     )
+    
     return render(request, "dashboard/invoices.html", locals())
 
 
